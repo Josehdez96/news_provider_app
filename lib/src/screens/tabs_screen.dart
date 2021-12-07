@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:news_provider/src/providers/navigation_provider.dart';
+import 'package:news_provider/src/providers/news_provider.dart';
 import 'package:provider/provider.dart';
 
 class TabsScreen extends StatelessWidget {
-  const TabsScreen({ Key? key }) : super(key: key);
+  const TabsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Just 1 provider, for more than one, use MultiProvider
     return ChangeNotifierProvider(
-      create: ( _ ) => _NavigationModel(),
+      create: (_) => NavigationProvider(),
       child: const Scaffold(
         body: _Screens(),
         bottomNavigationBar: _NavigationBar(),
@@ -17,21 +20,25 @@ class TabsScreen extends StatelessWidget {
 }
 
 class _NavigationBar extends StatelessWidget {
-  const _NavigationBar({
-    Key? key,
-  }) : super(key: key);
+  const _NavigationBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final navigationModel = Provider.of<_NavigationModel>(context);
+    final navigationProvider = Provider.of<NavigationProvider>(context);
 
     return BottomNavigationBar(
-      currentIndex: navigationModel.currentScreen,
-      onTap: (index) => navigationModel.currentScreen = index,
+      currentIndex: navigationProvider.currentScreen,
+      onTap: (index) => navigationProvider.currentScreen = index,
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'For you'),
-        BottomNavigationBarItem(icon: Icon(Icons.public), label: 'Headers'),
-      ]
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_outline),
+          label: 'For you',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.public),
+          label: 'Headers',
+        ),
+      ],
     );
   }
 }
@@ -43,10 +50,10 @@ class _Screens extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final navigationModel = Provider.of<_NavigationModel>(context);
+    final navigationProvider = Provider.of<NavigationProvider>(context);
 
     return PageView(
-      controller: navigationModel.pageController,
+      controller: navigationProvider.pageController,
       // physics: const BouncingScrollPhysics(),
       physics: const NeverScrollableScrollPhysics(),
       children: [
@@ -59,19 +66,4 @@ class _Screens extends StatelessWidget {
       ],
     );
   }
-}
-
-class _NavigationModel with ChangeNotifier {
-  int _currentScreen = 0;
-  final PageController _pageController = PageController();
-
-  int get currentScreen => _currentScreen;
-
-  set currentScreen(int value) {
-    _currentScreen = value;
-    _pageController.animateToPage(_currentScreen, duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
-    notifyListeners();
-  }
-
-  PageController get pageController => _pageController;
 }
