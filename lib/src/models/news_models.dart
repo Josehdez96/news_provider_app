@@ -43,7 +43,7 @@ class Article {
   });
 
   Source source;
-  String author;
+  String? author;
   String title;
   String? description;
   String url;
@@ -57,13 +57,13 @@ class Article {
 
   factory Article.fromMap(Map<String, dynamic> json) => Article(
         source: Source.fromMap(json["source"]),
-        author: json["author"],
+        author: json["author"] ?? '',
         title: json["title"],
-        description: json["description"],
+        description: json["description"] ?? '',
         url: json["url"],
-        urlToImage: json["urlToImage"],
+        urlToImage: json["urlToImage"] ?? '',
         publishedAt: DateTime.parse(json["publishedAt"]),
-        content: json["content"],
+        content: json["content"] ?? '',
       );
 
   Map<String, dynamic> toMap() => {
@@ -92,7 +92,7 @@ class Source {
   String toJson() => json.encode(toMap());
 
   factory Source.fromMap(Map<String, dynamic> json) => Source(
-        id: json["id"],
+        id: json["id"] ?? '',
         name: json["name"],
       );
 
