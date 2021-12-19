@@ -8,8 +8,10 @@ class Tab1Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final headlines = Provider.of<NewsProvider>(context).headlines;
+    final newsProvider = Provider.of<NewsProvider>(context);
 
-    return NewsList(news: headlines);
+    return (newsProvider.headlinesStatus == HeadlinesStatus.loading)
+        ? const Center(child: CircularProgressIndicator())
+        : NewsList(news: newsProvider.headlines);
   }
 }
