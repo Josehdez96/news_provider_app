@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:news_provider/src/models/category_model.dart';
 import 'package:news_provider/src/models/news_models.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,6 +11,15 @@ const String _newsUrl =
 class NewsProvider with ChangeNotifier {
   List<Article> headlines = [];
   HeadlinesStatus headlinesStatus = HeadlinesStatus.empty;
+  List<Category> categories = [
+    Category(Icons.business_center, 'business'),
+    Category(Icons.tv, 'entertainment'),
+    Category(Icons.business_center, 'general'),
+    Category(Icons.health_and_safety_outlined, 'health'),
+    Category(Icons.science_outlined, 'science'),
+    Category(Icons.sports_basketball_rounded, 'sports'),
+    Category(Icons.monitor_outlined, 'technology'),
+  ];
 
   NewsProvider() {
     getTopHeadlines();
