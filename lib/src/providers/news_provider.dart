@@ -11,6 +11,7 @@ const String _newsUrl =
 class NewsProvider with ChangeNotifier {
   List<Article> headlines = [];
   HeadlinesStatus headlinesStatus = HeadlinesStatus.empty;
+  String _selectedCategory = 'business';
   List<Category> categories = [
     Category(Icons.business_center, 'business'),
     Category(Icons.tv, 'entertainment'),
@@ -20,15 +21,26 @@ class NewsProvider with ChangeNotifier {
     Category(Icons.sports_basketball_rounded, 'sports'),
     Category(Icons.monitor_outlined, 'technology'),
   ];
+  Map<String, List<Article>> categoryArticles = {};
 
   NewsProvider() {
     getTopHeadlines();
+    for (var item in categories) {
+      categoryArticles[item.name] = [];
+    }
   }
 
-  getTopHeadlines({String path = _newsUrl}) async {
+  String get selectedCategory => _selectedCategory;
+  set selectedCategory(String category) {
+    _selectedCategory = category;
+    getArticlesByCategory(_selectedCategory);
+    notifyListeners();
+  }
+
+  void getTopHeadlines() async {
     try {
       HeadlinesStatus.loading;
-      final resp = await http.get(Uri.parse(path));
+      final resp = await http.get(Uri.parse(_newsUrl));
       if (resp.statusCode == 200) {
         final newsResponse = NewsResponse.fromJson(resp.body);
         headlines.addAll(newsResponse.articles);
@@ -39,6 +51,23 @@ class NewsProvider with ChangeNotifier {
       notifyListeners();
     } catch (err) {
       HeadlinesStatus.error;
+    }
+  }
+
+  void getArticlesByCategory(String category) async {
+    if (categoryArticles[category]!.isNotEmpty) {
+      return null;
+    }
+
+    try {
+      final resp = await http.get(Uri.parse('$_newsUrl&category=$category'));
+      if (resp.statusCode == 200) {
+        final newsResponse = NewsResponse.fromJson(resp.body);
+        categoryArticles[category]!.addAll(newsResponse.articles);
+      }
+      notifyListeners();
+    } catch (err) {
+      print(err);
     }
   }
 }
